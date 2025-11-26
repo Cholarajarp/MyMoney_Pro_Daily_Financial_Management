@@ -1,20 +1,19 @@
 services:
   - type: web
-    name: mymoney-fullstack
+    name: MyMoney_Pro_Daily_Financial_Management
     env: python
     plan: free
     branch: main
 
     buildCommand: |
-      # Install Node, build React from repo root, copy result to build/
+      # Install frontend dependencies
       npm ci
       npm run build
-      # Install python packages
+
+      # Install backend dependencies
       pip install -r requirements.txt
 
-    
     startCommand: gunicorn backend.app:app --workers ${WEB_CONCURRENCY:-3} --bind 0.0.0.0:$PORT
-
 
     envVars:
       - key: JWT_SECRET
