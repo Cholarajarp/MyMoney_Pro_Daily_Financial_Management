@@ -1,0 +1,8 @@
+flask
+flask-cors
+flask-sqlalchemy
+pyjwt
+gunicorn
+psycopg2-binary
+setuptools<81
+pytest

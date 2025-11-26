@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: mymoney-fullstack
+    env: python
+    plan: free
+    branch: main
+
+    buildCommand: |
+      # Install Node, build React from repo root, copy result to build/
+      npm ci
+      npm run build
+      # Install python packages
+      pip install -r requirements.txt
+
+    
+    startCommand: gunicorn backend.app:app --workers ${WEB_CONCURRENCY:-3} --bind 0.0.0.0:$PORT
+
+
+    envVars:
+      - key: JWT_SECRET
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: WEB_CONCURRENCY
+        sync: false
+
+    autoDeploy: true
