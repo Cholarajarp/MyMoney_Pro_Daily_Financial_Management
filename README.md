@@ -476,7 +476,7 @@ This project is licensed under the MIT License - see LICENSE file for details.
 ## Contact
 
 For questions, issues, or suggestions:
-- GitHub: https://github.com/Cholarajarp/MyMoney_Daily_Financial_Management_Application
+- GitHub: https://github.com/Cholarajarp/MyMoney_Pro_Daily_Financial_Management
 - Email: ccholarajarp@gmail.com
 
 ## Support
