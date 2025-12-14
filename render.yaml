@@ -1,0 +1,53 @@
+services:
+  # Backend Web Service
+  - type: web
+    name: mymoney-backend
+    env: python
+    region: singapore
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python init_db.py && gunicorn -w 4 -b 0.0.0.0:$PORT --timeout 120 backend.app:app
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.11.0
+    healthCheckPath: /api/health
+
+  # Frontend Static Site
+  - type: web
+    name: mymoney-frontend
+    env: static
+    region: singapore
+    plan: free
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./build
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: SAMEORIGIN
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-XSS-Protection
+        value: 1; mode=block
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: NODE_VERSION
+        value: 18.18.0
+      - key: REACT_APP_API_URL
+        value: https://mymoney-backend.onrender.com
+
+# Optional: PostgreSQL Database (uncomment to use)
+# databases:
+#   - name: mymoney-db
+#     databaseName: mymoney
+#     user: mymoney_user
+#     plan: free
+
