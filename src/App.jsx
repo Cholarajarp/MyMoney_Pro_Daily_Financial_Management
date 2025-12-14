@@ -23,6 +23,9 @@ import Investments from './components/Investments';
 import RecurringTransactions from './components/RecurringTransactions';
 import { categorizeMerchant, getCategorySuggestions, getCategoryIcon, getCategoryColor } from './utils/smartCategorization';
 
+// API Configuration
+const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+
 // Utility Functions
 function fmtINR(val) {
   if (val === null || val === undefined) return '₹0.00';
@@ -38,7 +41,7 @@ function authFetch(url, opts = {}) {
   const headers = Object.assign({}, opts.headers || {});
   if (!headers['Content-Type']) headers['Content-Type'] = 'application/json';
   if (token) headers['Authorization'] = 'Bearer ' + token;
-  return fetch(url, { ...opts, headers });
+  return fetch(API_BASE_URL + url, { ...opts, headers });
 }
 
 async function safeJson(res) {
@@ -2386,7 +2389,7 @@ export default function App() {
 
   const login = async (username, password) => {
     try {
-      const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
+      const res = await fetch(API_BASE_URL + '/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
       const data = await safeJson(res) || {};
       if (res.ok && data.token) {
         localStorage.setItem('token', data.token);
@@ -2408,7 +2411,7 @@ export default function App() {
   
   const register = async (username, password) => {
     try {
-      const res = await fetch('/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
+      const res = await fetch(API_BASE_URL + '/api/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username, password }) });
       const data = await safeJson(res) || {};
       if (res.ok && data.token) {
         localStorage.setItem('token', data.token);
