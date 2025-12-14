@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, DollarSign, RefreshCw } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Area, AreaChart } from 'recharts';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+
 const NetWorthTracker = () => {
   const [snapshots, setSnapshots] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -18,7 +20,7 @@ const NetWorthTracker = () => {
   const fetchSnapshots = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/net-worth', {
+      const response = await fetch(`${API_BASE_URL}/api/net-worth`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -43,7 +45,7 @@ const NetWorthTracker = () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/net-worth', {
+      const response = await fetch(`${API_BASE_URL}/api/net-worth`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

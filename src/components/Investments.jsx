@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, Plus, Edit2, Trash2, DollarSign, BarChart2 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+
 const Investments = () => {
   const [investments, setInvestments] = useState([]);
   const [summary, setSummary] = useState({
@@ -29,7 +31,7 @@ const Investments = () => {
   const fetchInvestments = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/investments', {
+      const response = await fetch(`${API_BASE_URL}/api/investments`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -53,7 +55,7 @@ const Investments = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const url = editingId ? `/api/investments/${editingId}` : '/api/investments';
+      const url = editingId ? `${API_BASE_URL}/api/investments/${editingId}` : `${API_BASE_URL}/api/investments`;
       const method = editingId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -88,7 +90,7 @@ const Investments = () => {
     if (!window.confirm('Delete this investment?')) return;
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/investments/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/investments/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`

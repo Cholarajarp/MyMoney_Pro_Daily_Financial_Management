@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Wallet, Building2, CreditCard, TrendingUp, Plus, Edit2, Trash2, CheckCircle } from 'lucide-react';
+import { Wallet, Building2, CreditCard, TrendingUp, Plus, Edit2, Trash2, CheckCircle, PieChart as PieChartIcon } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
 const Accounts = () => {
   const [accounts, setAccounts] = useState([]);
@@ -19,7 +22,7 @@ const Accounts = () => {
   const fetchAccounts = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/accounts', {
+      const response = await fetch(`${API_BASE_URL}/api/accounts`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -37,7 +40,7 @@ const Accounts = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const url = editingId ? `/api/accounts/${editingId}` : '/api/accounts';
+      const url = editingId ? `${API_BASE_URL}/api/accounts/${editingId}` : `${API_BASE_URL}/api/accounts`;
       const method = editingId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -64,7 +67,7 @@ const Accounts = () => {
     if (!window.confirm('Delete this account? All associated transactions will remain but be unlinked.')) return;
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/accounts/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/accounts/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -162,6 +165,36 @@ const Accounts = () => {
           <div className="text-3xl font-bold">₹{netWorth.toFixed(2)}</div>
         </div>
       </div>
+
+      {/* Analytics Section */}
+      {accounts.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+            <PieChartIcon className="w-5 h-5 text-blue-600" />
+            Account Balance Distribution
+          </h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={accounts.map(a => ({ name: a.name, value: Math.abs(a.balance) }))}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                outerRadius={100}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {accounts.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ec4899', '#06b6d4'][index % 6]} />
+                ))}
+              </Pie>
+              <Tooltip formatter={(value) => `₹${value.toFixed(2)}`} />
+              <Legend />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      )}
 
       {/* Accounts Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

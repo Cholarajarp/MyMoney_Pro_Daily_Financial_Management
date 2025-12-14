@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { DollarSign, Plus, Edit2, Trash2, TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
+import { DollarSign, Plus, Edit2, Trash2, TrendingUp, TrendingDown, AlertCircle, PieChart as PieChartIcon, BarChart3 } from 'lucide-react';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+
+const API_BASE_URL = process.env.REACT_APP_API_URL || '';
 
 const EnvelopeBudget = () => {
   const [envelopes, setEnvelopes] = useState([]);
@@ -22,7 +25,7 @@ const EnvelopeBudget = () => {
   const fetchEnvelopes = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/envelope-budgets?month=${currentMonth}`, {
+      const response = await fetch(`${API_BASE_URL}/api/envelope-budgets?month=${currentMonth}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -40,7 +43,7 @@ const EnvelopeBudget = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const url = editingId ? `/api/envelope-budgets/${editingId}` : '/api/envelope-budgets';
+      const url = editingId ? `${API_BASE_URL}/api/envelope-budgets/${editingId}` : `${API_BASE_URL}/api/envelope-budgets`;
       const method = editingId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -71,7 +74,7 @@ const EnvelopeBudget = () => {
     if (!window.confirm('Delete this envelope?')) return;
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/envelope-budgets/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/envelope-budgets/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -147,6 +150,58 @@ const EnvelopeBudget = () => {
           <div className="text-2xl font-bold text-green-600">₹{totalAvailable.toFixed(2)}</div>
         </div>
       </div>
+
+      {/* Analytics Section */}
+      {envelopes.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Spending by Category Pie Chart */}
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <PieChartIcon className="w-5 h-5 text-blue-600" />
+              Budget Distribution
+            </h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <PieChart>
+                <Pie
+                  data={envelopes.map(e => ({ name: e.category, value: e.assigned }))}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="value"
+                >
+                  {envelopes.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#06b6d4'][index % 6]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(value) => `₹${value.toFixed(2)}`} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+
+          {/* Spending vs Budget Bar Chart */}
+          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-purple-600" />
+              Activity vs Assigned
+            </h3>
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={envelopes}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="category" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} />
+                <Tooltip formatter={(value) => `₹${value.toFixed(2)}`} />
+                <Legend />
+                <Bar dataKey="assigned" fill="#3b82f6" name="Assigned" />
+                <Bar dataKey="activity" fill="#ef4444" name="Spent" />
+                <Bar dataKey="available" fill="#10b981" name="Available" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
 
       {/* Envelopes List */}
       <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700">

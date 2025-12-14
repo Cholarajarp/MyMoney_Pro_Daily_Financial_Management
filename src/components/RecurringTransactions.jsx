@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Plus, Edit2, Trash2, Play, Pause, Repeat } from 'lucide-react';
 
+const API_BASE_URL = process.env.REACT_APP_API_URL || '';
+
 const RecurringTransactions = () => {
   const [recurring, setRecurring] = useState([]);
   const [showForm, setShowForm] = useState(false);
@@ -24,7 +26,7 @@ const RecurringTransactions = () => {
   const fetchRecurring = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/recurring-transactions', {
+      const response = await fetch(`${API_BASE_URL}/api/recurring-transactions`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -42,7 +44,7 @@ const RecurringTransactions = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      const url = editingId ? `/api/recurring-transactions/${editingId}` : '/api/recurring-transactions';
+      const url = editingId ? `${API_BASE_URL}/api/recurring-transactions/${editingId}` : `${API_BASE_URL}/api/recurring-transactions`;
       const method = editingId ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -69,7 +71,7 @@ const RecurringTransactions = () => {
     if (!window.confirm('Delete this recurring transaction?')) return;
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/recurring-transactions/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/recurring-transactions/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -86,7 +88,7 @@ const RecurringTransactions = () => {
   const toggleActive = async (id, currentStatus) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch(`/api/recurring-transactions/${id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/recurring-transactions/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
