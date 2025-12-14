@@ -1705,7 +1705,7 @@ const QuickAddTransactionModal = ({ isOpen, onClose, onConfirm, budgets = [] }) 
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1 dark:text-slate-300 flex items-center gap-2">
+          <label className="text-sm font-medium mb-1 dark:text-slate-300 flex items-center gap-2">
             Merchant
             {merchant && type === 'expense' && (
               <span className="text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full flex items-center gap-1">
@@ -1723,7 +1723,7 @@ const QuickAddTransactionModal = ({ isOpen, onClose, onConfirm, budgets = [] }) 
         </div>
         
         <div className="relative">
-          <label className="block text-sm font-medium mb-1 dark:text-slate-300 flex items-center gap-2">
+          <label className="text-sm font-medium mb-1 dark:text-slate-300 flex items-center gap-2">
             Category
             {autoDetected && (
               <span className="text-xs px-2 py-0.5 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full flex items-center gap-1 animate-pulse">
@@ -2187,7 +2187,7 @@ const ProfileModal = ({ isOpen, onClose, user, setUser, darkMode, transactions =
           {!editMode ? (
             <div className="space-y-4">
               <div className="p-4 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl border border-slate-200 dark:border-slate-600 shadow-sm">
-                <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2 flex items-center gap-2">
+                <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2 flex items-center gap-2">
                   <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
                   Username
                 </label>
