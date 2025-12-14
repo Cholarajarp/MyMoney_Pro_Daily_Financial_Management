@@ -2021,9 +2021,10 @@ const NotificationCenter = ({ isOpen, onClose, notifications = [], transactions 
 };
 
 // 👤 ENHANCED PROFILE MODAL - REAL-WORLD DESIGN WITH REAL DATA
-const ProfileModal = ({ isOpen, onClose, user, darkMode, transactions = [], goals = [], budgets = [] }) => {
+const ProfileModal = ({ isOpen, onClose, user, setUser, darkMode, transactions = [], goals = [], budgets = [] }) => {
   const [editMode, setEditMode] = useState(false);
   const [avatarHover, setAvatarHover] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '');
   const [formData, setFormData] = useState({
     full_name: user?.full_name || '',
     email: user?.email || '',
@@ -2066,13 +2067,30 @@ const ProfileModal = ({ isOpen, onClose, user, darkMode, transactions = [], goal
     }
   }, [user]);
 
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setAvatarUrl(event.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSave = async () => {
     try {
       const res = await authFetch('/api/user/profile', {
         method: 'PUT',
-        body: JSON.stringify(formData)
+        body: JSON.stringify({ ...formData, avatar_url: avatarUrl })
       });
       if (res.ok) {
+        const data = await res.json();
+        // Update user state and localStorage
+        const updatedUser = { ...user, ...data.user };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+
         // Success notification
         const successDiv = document.createElement('div');
         successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate-fade-in-down';
@@ -2081,8 +2099,6 @@ const ProfileModal = ({ isOpen, onClose, user, darkMode, transactions = [], goal
         setTimeout(() => successDiv.remove(), 3000);
 
         setEditMode(false);
-        // Reload user data
-        window.location.reload();
       } else {
         alert('Failed to update profile');
       }
@@ -2112,22 +2128,36 @@ const ProfileModal = ({ isOpen, onClose, user, darkMode, transactions = [], goal
               className="relative group cursor-pointer"
               onMouseEnter={() => setAvatarHover(true)}
               onMouseLeave={() => setAvatarHover(false)}
+              onClick={() => editMode && document.getElementById('avatar-upload').click()}
             >
               {/* Animated glow */}
               <div className="absolute inset-0 bg-gradient-to-tr from-blue-500 via-purple-500 to-indigo-500 rounded-full blur-xl opacity-50 group-hover:opacity-75 animate-pulse"></div>
 
               {/* Avatar */}
-              <div className="relative h-24 w-24 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-3xl shadow-2xl border-4 border-white dark:border-slate-800 group-hover:scale-110 transition-all duration-300">
-                {(user?.username || 'U')[0].toUpperCase()}
+              <div className="relative h-24 w-24 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-3xl shadow-2xl border-4 border-white dark:border-slate-800 group-hover:scale-110 transition-all duration-300 overflow-hidden">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  (user?.username || 'U')[0].toUpperCase()
+                )}
               </div>
 
               {/* Hover overlay */}
-              {avatarHover && (
+              {avatarHover && editMode && (
                 <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
                   <span className="text-white text-xs font-medium">Change Photo</span>
                 </div>
               )}
             </div>
+            {editMode && (
+              <input
+                id="avatar-upload"
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoUpload}
+                className="hidden"
+              />
+            )}
 
             {/* Username & Badge */}
             <h3 className="mt-4 text-2xl font-bold text-slate-900 dark:text-white">{user?.username || 'User'}</h3>
@@ -2592,7 +2622,7 @@ export default function App() {
       <QuickAddTransactionModal isOpen={showQuickAdd} onClose={() => setShowQuickAdd(false)} onConfirm={handleAddTransaction} budgets={budgets} />
       <QuickAddGoalModal isOpen={showGoalModal} onClose={() => setShowGoalModal(false)} onConfirm={(data) => { addGoal(data); setShowGoalModal(false); }} />
       <NotificationCenter isOpen={showNotifCenter} onClose={() => setShowNotifCenter(false)} notifications={notif} transactions={transactions} onClearAll={clearAllNotifications} />
-      <ProfileModal isOpen={showProfile} onClose={() => setShowProfile(false)} user={user} darkMode={darkMode} transactions={transactions} goals={goals} budgets={budgets} />
+      <ProfileModal isOpen={showProfile} onClose={() => setShowProfile(false)} user={user} setUser={setUser} darkMode={darkMode} transactions={transactions} goals={goals} budgets={budgets} />
     </div>
   );
 }

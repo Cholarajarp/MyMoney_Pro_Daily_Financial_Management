@@ -29,6 +29,7 @@ class User(db.Model):
     mobile = db.Column(db.String(20), nullable=True)
     hobbies = db.Column(db.String(256), nullable=True)
     bio = db.Column(db.String(512), nullable=True)
+    avatar_url = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
 class Transaction(db.Model):
@@ -199,7 +200,7 @@ def register():
     u = User(username=username, password_hash=generate_password_hash(password))
     db.session.add(u); db.session.commit()
     token = create_token(u.id)
-    return jsonify({'status':'ok','token': token, 'user': {'id': u.id, 'username': u.username, 'full_name': u.full_name, 'email': u.email, 'mobile': u.mobile, 'hobbies': u.hobbies, 'bio': u.bio}}), 201
+    return jsonify({'status':'ok','token': token, 'user': {'id': u.id, 'username': u.username, 'full_name': u.full_name, 'email': u.email, 'mobile': u.mobile, 'hobbies': u.hobbies, 'bio': u.bio, 'avatar_url': u.avatar_url}}), 201
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -210,7 +211,7 @@ def login():
     if not u or not check_password_hash(u.password_hash, password):
         return jsonify({'error':'invalid credentials'}), 401
     token = create_token(u.id)
-    return jsonify({'status':'ok','token': token, 'user': {'id': u.id, 'username': u.username, 'full_name': u.full_name, 'email': u.email, 'mobile': u.mobile, 'hobbies': u.hobbies, 'bio': u.bio}})
+    return jsonify({'status':'ok','token': token, 'user': {'id': u.id, 'username': u.username, 'full_name': u.full_name, 'email': u.email, 'mobile': u.mobile, 'hobbies': u.hobbies, 'bio': u.bio, 'avatar_url': u.avatar_url}})
 
 # Sample public hello
 @app.route('/api/hello')
@@ -238,7 +239,8 @@ def get_profile():
         'email': user.email,
         'mobile': user.mobile,
         'hobbies': user.hobbies,
-        'bio': user.bio
+        'bio': user.bio,
+        'avatar_url': user.avatar_url
     })
 
 @app.route('/api/user/profile', methods=['PUT'])
@@ -251,6 +253,8 @@ def update_profile():
     user.mobile = data.get('mobile', user.mobile)
     user.hobbies = data.get('hobbies', user.hobbies)
     user.bio = data.get('bio', user.bio)
+    if 'avatar_url' in data:
+        user.avatar_url = data.get('avatar_url')
     db.session.commit()
     return jsonify({'status': 'updated', 'user': {
         'id': user.id,
@@ -259,7 +263,8 @@ def update_profile():
         'email': user.email,
         'mobile': user.mobile,
         'hobbies': user.hobbies,
-        'bio': user.bio
+        'bio': user.bio,
+        'avatar_url': user.avatar_url
     }})
 
 # Transactions (protected)
