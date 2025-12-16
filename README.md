@@ -12,7 +12,7 @@
 [![Python](https://img.shields.io/badge/python-3.11+-3776ab.svg)](https://www.python.org/)
 [![Deploy to Render](https://img.shields.io/badge/deploy-render-46e3b7.svg)](https://render.com)
 
-[Features](#-features) • [Demo](#-demo) • [Quick Start](#-quick-start) • [Deployment](#-deployment) 
+[Features](#-features)  • [Quick Start](#-quick-start)  
 
 </div>
 
