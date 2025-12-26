@@ -112,7 +112,7 @@ const EnvelopeBudget = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Envelope Budget</h2>
-          <p className="text-slate-600 dark:text-slate-400 mt-1">Give every dollar a job</p>
+          <p className="text-slate-600 dark:text-slate-400 mt-1">Give every rupee a job</p>
         </div>
         <div className="flex gap-3 items-center">
           <input

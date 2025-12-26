@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, AlertCircle, Mail, Lock, LogIn, Chrome, Apple, User } from 'lucide-react';
 
-const LoginForm = ({ onLogin, onSwitchToSignup, loading, error }) => {
+const LoginForm = ({ onLogin, onSwitchToSignup, loading, error, onOpenModal }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);

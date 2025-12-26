@@ -5,6 +5,7 @@ Seeds default budget templates
 
 from backend.app import app, db, BudgetTemplate
 import json
+import os
 
 def seed_budget_templates():
     """Add default budget templates to the database"""
@@ -89,23 +90,62 @@ def seed_budget_templates():
         }
     ]
 
-    with app.app_context():
-        # Check if templates already exist
-        existing = BudgetTemplate.query.filter_by(is_public=True).count()
-        if existing > 0:
-            print(f"✓ Budget templates already exist ({existing} templates)")
-            return
+    try:
+        with app.app_context():
+            # Check if templates already exist
+            existing = BudgetTemplate.query.filter_by(is_public=True).count()
+            if existing > 0:
+                print(f"✓ Budget templates already exist ({existing} templates)")
+                return
 
-        # Add templates
-        for template_data in templates:
-            template = BudgetTemplate(**template_data)
-            db.session.add(template)
+            # Add templates
+            for template_data in templates:
+                template = BudgetTemplate(**template_data)
+                db.session.add(template)
 
-        db.session.commit()
-        print(f"✓ Successfully added {len(templates)} budget templates")
+            db.session.commit()
+            print(f"✓ Successfully added {len(templates)} budget templates")
+    except Exception as e:
+        print(f"Primary ORM seed failed ({e}), falling back to engine/session insert...")
+        # Fallback: use raw engine and a new Session to insert directly
+        from sqlalchemy import create_engine
+        from sqlalchemy.orm import Session
+        engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+        from sqlalchemy import select, func
+        with Session(engine) as sess:
+            # check existing via table
+            existing = sess.execute(select(func.count()).select_from(BudgetTemplate.__table__)).scalar()
+            if existing and existing > 0:
+                print(f"✓ Budget templates already exist ({existing} templates) [fallback]")
+                return
+            for template_data in templates:
+                sess.execute(BudgetTemplate.__table__.insert().values(**template_data))
+            sess.commit()
+            print(f"✓ Successfully added {len(templates)} budget templates [fallback]")
 
 if __name__ == '__main__':
     print("Initializing MyMoney Pro database...")
+    # Ensure database tables exist before seeding templates
+    try:
+        with app.app_context():
+            db.create_all()
+            print("✓ Ensured database tables are present")
+    except Exception as e:
+        print(f"⚠️ Could not create tables via SQLAlchemy: {e}")
+        print("Attempting to initialize DB file directly with sqlite3, then using SQLAlchemy engine to create tables...")
+        import sqlite3
+        from sqlalchemy import create_engine
+        p = os.path.join('instance', 'mymoney.db')
+        try:
+            sqlite3.connect(p).close()
+            print(f"Touched sqlite file: {p}")
+            # try using a separate engine and metadata.create_all
+            engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
+            db.metadata.create_all(bind=engine)
+            print("✓ Retry create_all succeeded via engine.metadata.create_all")
+        except Exception as e2:
+            print(f"Failed to create DB even after touching file and using engine: {e2}")
+            raise
     seed_budget_templates()
     print("✓ Database initialization complete!")
 

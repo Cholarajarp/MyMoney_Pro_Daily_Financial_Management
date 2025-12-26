@@ -13,11 +13,35 @@ JWT_SECRET = os.environ.get('JWT_SECRET') or 'change-this-secret'
 JWT_ALGO = 'HS256'
 
 # Database config (SQLite by default). To use MySQL set DATABASE_URL env var.
-DATABASE_URL = os.environ.get('DATABASE_URL') or 'sqlite:///mymoney.db'
+# Default to using the instance directory to match Docker/.env.example and avoid
+# accidental creation of a DB in the repo root. If using SQLite ensure the
+# instance directory exists so the DB file can be created there.
+DATABASE_URL = os.environ.get('DATABASE_URL') or 'sqlite:///instance/mymoney.db'
+# If using SQLite, normalize relative paths to absolute paths so SQLAlchemy
+# opens the same file regardless of the current working directory.
+if DATABASE_URL.startswith('sqlite:///'):
+    db_path = DATABASE_URL.replace('sqlite:///', '')
+    # If db_path is relative, make it absolute
+    if not os.path.isabs(db_path):
+        abs_db_path = os.path.abspath(db_path)
+        # SQLite URL needs forward slashes and triple slash
+        DATABASE_URL = 'sqlite:///' + abs_db_path.replace('\\', '/')
+        db_path = abs_db_path
+    db_dir = os.path.dirname(db_path)
+    if db_dir and not os.path.exists(db_dir):
+        os.makedirs(db_dir, exist_ok=True)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URL
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
+# Helpful log for debugging in development
+print(f"[app] Using DATABASE_URL={app.config['SQLALCHEMY_DATABASE_URI']}")
+
+# Initialize SQLAlchemy without binding to app yet so we can ensure the
+# database file/directory exists and avoid creating an engine before setup.
+db = SQLAlchemy()
+# Bind to app after config and directory checks
+db.init_app(app)
 
 # Models
 class User(db.Model):
@@ -151,9 +175,13 @@ class BudgetTemplate(db.Model):
     is_public = db.Column(db.Boolean, default=True)
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
 
-# Create tables at startup
-with app.app_context():
-    db.create_all()
+# Create tables at startup (don't crash import if DB isn't accessible; useful in containerized environments)
+try:
+    with app.app_context():
+        db.create_all()
+except Exception as e:
+    # Log a helpful message but allow the app to import (init_db.py or subsequent calls can create tables)
+    print(f"[app] Warning: could not create database tables at startup: {e}")
 
 # Auth helpers
 def create_token(user_id):

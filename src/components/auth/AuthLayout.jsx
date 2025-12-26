@@ -1,7 +1,7 @@
 import React from 'react';
-import { Wallet, Sparkles } from 'lucide-react';
+import { Wallet, Sparkles, X } from 'lucide-react';
 
-const AuthLayout = ({ children }) => {
+const AuthLayout = ({ children, modalType, setModalType }) => {
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
       {/* Animated Background Elements */}
@@ -80,15 +80,58 @@ const AuthLayout = ({ children }) => {
           <div className="mt-8 text-center text-sm text-slate-500 dark:text-slate-400">
             <p>&copy; 2025 MyMoney Pro. All rights reserved.</p>
             <div className="mt-2 space-x-4">
-              <a href="#" className="hover:text-blue-600 transition-colors">Privacy</a>
+              <button onClick={() => setModalType('privacy')} className="hover:text-blue-600 transition-colors bg-transparent border-none cursor-pointer text-sm text-slate-500 dark:text-slate-400">Privacy</button>
               <span>•</span>
-              <a href="#" className="hover:text-blue-600 transition-colors">Terms</a>
+              <button onClick={() => setModalType('terms')} className="hover:text-blue-600 transition-colors bg-transparent border-none cursor-pointer text-sm text-slate-500 dark:text-slate-400">Terms</button>
               <span>•</span>
-              <a href="#" className="hover:text-blue-600 transition-colors">Support</a>
+              <a href="mailto:ccholarajarp@gmail.com" className="hover:text-blue-600 transition-colors">Support</a>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      {modalType && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-slate-800 p-6 rounded-lg max-w-md w-full mx-4 max-h-96 overflow-y-auto">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold">{modalType === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}</h2>
+              <button onClick={() => setModalType(null)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                <X size={24} />
+              </button>
+            </div>
+            <div className="text-sm text-gray-700 dark:text-gray-300">
+              {modalType === 'privacy' ? (
+                <div>
+                  <p>Your privacy is important to us. This Privacy Policy explains how MyMoney Pro, a personal finance management application, collects, uses, and protects your personal information.</p>
+                  <h3 className="font-semibold mt-2">Information We Collect</h3>
+                  <p>We collect information you provide directly, such as when you create an account, add transactions, set budgets, or track investments. This includes financial data like transaction amounts, categories, dates, and account balances.</p>
+                  <h3 className="font-semibold mt-2">How We Use Your Information</h3>
+                  <p>We use your information to provide and improve our financial management services, including budgeting tools, expense tracking, investment monitoring, and personalized financial insights. We may also use aggregated, anonymized data to enhance app features.</p>
+                  <h3 className="font-semibold mt-2">Data Security</h3>
+                  <p>We implement appropriate security measures to protect your personal and financial information against unauthorized access, alteration, disclosure, or destruction. Your data is encrypted and stored securely.</p>
+                  <h3 className="font-semibold mt-2">Data Sharing</h3>
+                  <p>We do not sell, trade, or otherwise transfer your personal information to third parties without your consent, except as required by law or to provide the services you request.</p>
+                  <p>For more details, contact us at ccholarajarp@gmail.com</p>
+                </div>
+              ) : (
+                <div>
+                  <p>By using MyMoney Pro, a comprehensive personal finance management application, you agree to these Terms of Service.</p>
+                  <h3 className="font-semibold mt-2">Use of Service</h3>
+                  <p>You agree to use the service only for lawful purposes and in accordance with these terms. MyMoney Pro is designed for personal financial tracking, budgeting, and investment monitoring.</p>
+                  <h3 className="font-semibold mt-2">User Accounts</h3>
+                  <p>You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
+                  <h3 className="font-semibold mt-2">Financial Data</h3>
+                  <p>You acknowledge that you are responsible for the accuracy of financial data entered into the app. MyMoney Pro provides tools to help manage your finances but does not guarantee financial outcomes.</p>
+                  <h3 className="font-semibold mt-2">Limitation of Liability</h3>
+                  <p>MyMoney Pro is provided "as is" without warranties. We are not liable for any financial losses, damages, or decisions made based on the information provided by the app.</p>
+                  <p>For questions, contact us at ccholarajarp@gmail.com</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, AlertCircle, Mail, Lock, UserPlus, User, Chrome, Apple, Check, X } from 'lucide-react';
 
-const SignupForm = ({ onRegister, onSwitchToLogin, loading, error }) => {
+const SignupForm = ({ onRegister, onSwitchToLogin, loading, error, onOpenModal }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -257,13 +257,13 @@ const SignupForm = ({ onRegister, onSwitchToLogin, loading, error }) => {
             />
             <label htmlFor="terms" className="text-sm text-slate-600 dark:text-slate-400 cursor-pointer">
               I agree to the{' '}
-              <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline font-semibold">
+              <button type="button" onClick={() => onOpenModal('terms')} className="text-blue-600 dark:text-blue-400 hover:underline font-semibold bg-transparent border-none cursor-pointer">
                 Terms of Service
-              </a>{' '}
+              </button>{' '}
               and{' '}
-              <a href="#" className="text-blue-600 dark:text-blue-400 hover:underline font-semibold">
+              <button type="button" onClick={() => onOpenModal('privacy')} className="text-blue-600 dark:text-blue-400 hover:underline font-semibold bg-transparent border-none cursor-pointer">
                 Privacy Policy
-              </a>
+              </button>
             </label>
           </div>
 

@@ -7,6 +7,7 @@ const AuthManager = ({ onLogin, onRegister }) => {
   const [authMode, setAuthMode] = useState('login');
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState('');
+  const [modalType, setModalType] = useState(null);
 
   const handleLogin = async (username, password) => {
     setAuthLoading(true);
@@ -31,13 +32,14 @@ const AuthManager = ({ onLogin, onRegister }) => {
   };
 
   return (
-    <AuthLayout>
+    <AuthLayout modalType={modalType} setModalType={setModalType}>
       {authMode === 'login' ? (
         <LoginForm
           onLogin={handleLogin}
           onSwitchToSignup={() => { setAuthMode('signup'); setAuthError(''); }}
           loading={authLoading}
           error={authError}
+          onOpenModal={setModalType}
         />
       ) : (
         <SignupForm
@@ -45,6 +47,7 @@ const AuthManager = ({ onLogin, onRegister }) => {
           onSwitchToLogin={() => { setAuthMode('login'); setAuthError(''); }}
           loading={authLoading}
           error={authError}
+          onOpenModal={setModalType}
         />
       )}
     </AuthLayout>
@@ -52,4 +55,3 @@ const AuthManager = ({ onLogin, onRegister }) => {
 };
 
 export default AuthManager;
-
