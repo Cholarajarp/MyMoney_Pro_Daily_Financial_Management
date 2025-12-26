@@ -125,36 +125,34 @@ Navigate to `http://localhost:3000`
 
 ### Using Docker Compose (Recommended)
 
-The easiest way to deploy MyMoney Pro is using Docker Compose:
+The repository now uses a single combined Dockerfile that builds the React frontend and runs the Flask backend from one container. The easiest way to run it locally is using Docker Compose:
 
 ```bash
-# Build and start all services
-docker-compose up -d
+# Build and start the app
+docker-compose up -d --build
 
 # View logs
 docker-compose logs -f
 
-# Stop all services
+# Stop
 docker-compose down
 ```
 
 The application will be available at:
-- Frontend: `http://localhost:3000`
-- Backend API: `http://localhost:5000`
+- App (frontend + backend on same origin): `http://localhost:5000`
 
 ### Manual Docker Build
 
-**Build Frontend Image:**
+**Build combined app image:**
 ```bash
-docker build -t mymoney-frontend -f Dockerfile.frontend .
-docker run -p 3000:80 mymoney-frontend
+docker build -t mymoney-app -f Dockerfile .
+docker run -p 5000:5000 -v $(pwd)/instance:/app/instance mymoney-app
 ```
 
-**Build Backend Image:**
-```bash
-docker build -t mymoney-backend -f Dockerfile.backend .
-docker run -p 5000:5000 -v $(pwd)/data:/app/data mymoney-backend
-```
+Notes:
+- The frontend is served as static assets by the Flask app (no separate frontend container needed).
+- Set `DATABASE_URL`/`JWT_SECRET` as environment variables when running in production.
+
 
 ---
 

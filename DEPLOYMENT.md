@@ -29,16 +29,14 @@
 Works on: AWS, Google Cloud, Azure, DigitalOcean, Heroku, etc.
 
 ```bash
-# Build and run with Docker Compose
-docker-compose up -d
+# Build and run with Docker Compose (single combined container)
+docker-compose up -d --build
 
-# Or build separately
-docker build -t mymoney-frontend -f Dockerfile.frontend .
-docker build -t mymoney-backend -f Dockerfile.backend .
+# Or build manually
+docker build -t mymoney-app -f Dockerfile .
 
 # Run
-docker run -p 3000:80 mymoney-frontend
-docker run -p 5000:5000 mymoney-backend
+docker run -p 5000:5000 -v $(pwd)/instance:/app/instance mymoney-app
 ```
 
 ### Option 3: Manual Deployment
@@ -172,8 +170,8 @@ docker-compose down -v
 
 #### Google Cloud Run
 ```bash
-gcloud builds submit --tag gcr.io/PROJECT_ID/mymoney-backend
-gcloud run deploy --image gcr.io/PROJECT_ID/mymoney-backend
+gcloud builds submit --tag gcr.io/PROJECT_ID/mymoney-app
+gcloud run deploy --image gcr.io/PROJECT_ID/mymoney-app
 ```
 
 #### DigitalOcean App Platform
@@ -185,7 +183,7 @@ gcloud run deploy --image gcr.io/PROJECT_ID/mymoney-backend
 #### Azure Container Instances
 ```bash
 az container create --resource-group myResourceGroup \
-  --name mymoney-backend --image myregistry.azurecr.io/mymoney-backend
+  --name mymoney-app --image myregistry.azurecr.io/mymoney-app
 ```
 
 ---

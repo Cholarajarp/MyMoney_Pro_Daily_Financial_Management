@@ -24,10 +24,9 @@
   └─ GITHUB_SETUP.md (NEW)             - GitHub repository setup guide
 
 ✅ DOCKER CONFIGURATION
-  ├─ Dockerfile.frontend (758 B)       - Frontend container (Node + Nginx)
-  ├─ Dockerfile.backend (819 B)        - Backend container (Python + Gunicorn)
-  ├─ docker-compose.yml (1.3 KB)       - Multi-container orchestration
-  ├─ nginx.conf (1.7 KB)               - Production web server config
+  ├─ Dockerfile (combined)             - Multi-stage Dockerfile (build frontend & run backend)
+  ├─ docker-compose.yml (1.3 KB)       - Service orchestration (single container)
+  ├─ nginx.conf (1.7 KB)               - Production web server config (unused by combined image)
   └─ .dockerignore (853 B)             - Docker build exclusions
 
 ✅ DEPLOYMENT CONFIGURATION
@@ -96,8 +95,8 @@
    $ npm start              # Terminal 2
 
 📌 DOCKER DEPLOYMENT
-   $ docker-compose up -d
-   $ open http://localhost:3000
+   $ docker-compose up -d --build
+   $ open http://localhost:5000
 
 📌 GIT PUSH TO GITHUB
    $ git add .

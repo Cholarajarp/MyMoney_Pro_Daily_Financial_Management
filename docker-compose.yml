@@ -1,12 +1,11 @@
 version: "3.8"
 
 services:
-  backend:
+  app:
     build:
       context: .
-      dockerfile: Dockerfile.backend
-    container_name: mymoney-backend
-    restart: unless-stopped
+      dockerfile: Dockerfile
+    container_name: mymoney-app
     ports:
       - "5000:5000"
     environment:
@@ -24,21 +23,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    container_name: mymoney-frontend
-    restart: unless-stopped
-    ports:
-      - "3000:80"
-    depends_on:
-      - backend
-    environment:
-      - REACT_APP_API_URL=http://backend:5000
-    networks:
-      - mymoney-network
 
 networks:
   mymoney-network:
