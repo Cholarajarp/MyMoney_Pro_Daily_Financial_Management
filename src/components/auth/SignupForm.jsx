@@ -265,6 +265,11 @@ const SignupForm = ({ onRegister, onSwitchToLogin, loading, error, onOpenModal }
                 Privacy Policy
               </button>
             </label>
+
+            {/* Support link */}
+            <div className="w-full text-sm mt-2 text-slate-500 dark:text-slate-400">
+              Need help? <a href="mailto:ccholarajarp@gmail.com" className="text-blue-600 dark:text-blue-400 hover:underline">Contact Support</a>
+            </div>
           </div>
 
           {/* Submit Button */}

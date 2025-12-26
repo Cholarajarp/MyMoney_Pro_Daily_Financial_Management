@@ -155,6 +155,15 @@ const LoginForm = ({ onLogin, onSwitchToSignup, loading, error, onOpenModal }) =
               Create one now
             </button>
           </p>
+
+          {/* Quick links: Privacy, Terms, Support */}
+          <div className="mt-3 text-sm text-slate-500 dark:text-slate-400">
+            <button onClick={() => onOpenModal && onOpenModal('privacy')} className="hover:text-blue-600 transition-colors bg-transparent border-none cursor-pointer mr-2">Privacy</button>
+            <span className="mx-1">•</span>
+            <button onClick={() => onOpenModal && onOpenModal('terms')} className="hover:text-blue-600 transition-colors bg-transparent border-none cursor-pointer mx-2">Terms</button>
+            <span className="mx-1">•</span>
+            <a href="mailto:ccholarajarp@gmail.com" className="hover:text-blue-600 transition-colors ml-2">Support</a>
+          </div>
         </div>
       </div>
     </div>
