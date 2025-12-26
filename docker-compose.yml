@@ -25,10 +25,10 @@ services:
       retries: 3
       start_period: 40s
 
-  frontend:
+    frontend:
     build:
-      context: .
-      dockerfile: Dockerfile.frontend
+      context: ./src
+      dockerfile: ../Dockerfile.frontend
     container_name: mymoney-frontend
     restart: unless-stopped
     ports:
@@ -36,15 +36,10 @@ services:
     depends_on:
       - backend
     environment:
-      # IMPORTANT FIX: use Docker service name, NOT localhost
       - REACT_APP_API_URL=http://backend:5000
     networks:
       - mymoney-network
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+
 
 networks:
   mymoney-network:
