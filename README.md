@@ -1,4 +1,4 @@
-8# 💰 MyMoney Pro - Daily Financial Management
+💰 MyMoney Pro - Daily Financial Management
 
 <div align="center">
 
