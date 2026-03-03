@@ -1,4 +1,4 @@
-# 💰 MyMoney Pro - Daily Financial Management
+8# 💰 MyMoney Pro - Daily Financial Management
 
 <div align="center">
 
@@ -520,7 +520,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Inspired by YNAB (You Need A Budget) methodology
 - Designed specifically for Indian users and currency
 - Thanks to the open-source community for amazing tools
-- Special thanks to all contributors and users
 
 ---
 
